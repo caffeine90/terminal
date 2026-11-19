@@ -1,0 +1,83 @@
+/* Terminal App Styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Geist Variable', 'Geist', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Selection */
+::selection {
+  background: #ffffff40;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Terminal container ensures proper sizing */
+.terminal-container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+/* xterm.js overrides for better integration */
+.xterm {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace !important;
+}
+
+.xterm .xterm-rows {
+  line-height: 1.2 !important;
+}
+
+.xterm .xterm-cursor {
+  border-left: none !important;
+}
+
+.xterm .xterm-cursor-block {
+  outline: none !important;
+  background-color: #ffffff !important;
+}
+
+/* Web links addon */
+.xterm .xterm-link {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Ensure terminal fills container */
+#root > div {
+  height: 100%;
+}

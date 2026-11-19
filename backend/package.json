@@ -1,0 +1,35 @@
+{
+  "name": "terminal-backend",
+  "version": "1.0.0",
+  "description": "TypeScript Express backend for terminal project",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "node --watch --experimental-strip-types src/index.ts",
+    "start": "node --experimental-strip-types src/index.ts",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write src"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "node-pty": "^1.1.0",
+    "ws": "^8.23.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.18.2",
+    "prettier": "^3.10.1",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=26.0.0"
+  }
+}
