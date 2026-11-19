@@ -13,17 +13,21 @@ const app = express();
 app.set('trust proxy', true);
 
 // Security middleware
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' },
-}));
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+);
 
 // CORS configuration
-app.use(cors({
-  origin: config.corsOrigin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-}));
+app.use(
+    cors({
+        origin: config.corsOrigin,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+    })
+);
 
 // Request parsing
 app.use(express.json({ limit: '10mb' }));
@@ -34,9 +38,9 @@ app.use(requestIdMiddleware);
 
 // Logging
 if (isDevelopment) {
-  app.use(morgan('dev'));
+    app.use(morgan('dev'));
 } else {
-  app.use(morgan('combined'));
+    app.use(morgan('combined'));
 }
 
 // API routes (includes health check at /api/health)
