@@ -31,6 +31,124 @@ This project provides a real Linux terminal experience in the browser. The front
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+  How it works
+
+  This is a client–server setup — the frontend does not run a terminal itself. It's a React + xterm.js UI that connects over
+  WebSocket to the backend, which spawns a real PTY (pseudo-terminal) running your Linux shell (/bin/bash or $SHELL).
+
+  - Backend (/home/morteza/Projects/terminal/backend): Express + ws + node-pty. Listens on port 3000 (configurable via PORT).
+    WebSocket endpoint: ws://<host>:3000/api/pty.
+  - Frontend (/home/morteza/Projects/terminal/frontend): Vite + React + xterm.js. Connects to the backend WebSocket, sends
+    keystrokes, renders terminal output. Configured via VITE_API_HOST.
+
+  Steps to run on any Linux machine
+
+  1. Prerequisites on the target machine
+
+  You need Node.js ≥ 26 (check backend/package.json "engines": {"node": ">=26.0.0"}).
+
+  # Check node version
+  node --version
+  # If needed, install Node 26+ (e.g. via nvm)
+  nvm install 26
+  nvm use 26
+
+  2. Copy the project to the machine
+
+  Copy the whole repo (or just backend/ and frontend/) to the target Linux box:
+
+  scp -r /home/morteza/Projects/terminal user@<linux-machine>:~/
+
+  3. Backend setup
+
+  cd ~/terminal/backend
+
+  # Install dependencies
+  npm install
+
+  # Configure (optional) — create .env from example
+  cp .env.example .env
+  # Edit PORT, CORS_ORIGIN, etc. if needed
+
+  # Start the backend (dev mode with auto-reload)
+  npm run dev
+  # or for production:
+  # npm start
+
+  The backend will print something like:
+  🚀 Server running in development mode
+  📡 Listening on port 3000
+  🔌 PTY WebSocket: ws://localhost:3000/api/pty
+
+  4. Frontend setup
+
+  cd ~/terminal/frontend
+
+  # Install dependencies
+  npm install
+
+  # Point the frontend at your backend
+  # Edit .env: VITE_API_HOST=<backend-host>:3000
+  # For local machine: VITE_API_HOST=localhost:3000
+  # For remote access: VITE_API_HOST=<your-linux-machine-ip-or-domain>:3000
+
+  # Build for production
+  npm run build
+
+  This produces static files in frontend/dist/.
+
+  5. Serve the frontend
+
+  You can serve dist/ with any static server. Quick options:
+
+  # Option A: vite preview (good for testing)
+  npm run preview
+
+  # Option B: serve with npx serve
+  npx serve -s dist -l 5173
+
+  # Option C: serve with nginx/apache (production)
+
+  6. Open in browser
+
+  Navigate to http://<linux-machine-ip-or-domain>:5173 (or whatever port you serve the frontend on).
+
+  The header shows the WebSocket URL (ws://localhost:3000/api/pty by default). If you're accessing from another machine, make sure
+  VITE_API_HOST points to the backend's reachable host, not localhost.
+
+  Important notes
+
+  ┌─────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │  Consideration  │                                                 Details                                                 │
+  ├─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Real shell      │ The backend spawns process.env.SHELL || '/bin/bash', so you get a genuine Linux terminal — ls, cd, ssh, │
+  │                 │  vim, etc. all work.                                                                                    │
+  ├─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ CORS            │ Backend corsOrigin defaults to http://localhost:5173. If serving the frontend elsewhere, set            │
+  │                 │ CORS_ORIGIN in backend .env to match.                                                                   │
+  ├─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Firewall        │ Make sure ports 3000 (backend API/WebSocket) and 5173 (frontend) are open if accessing from another     │
+  │                 │ machine.                                                                                                │
+  ├─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ PTY vs SSH      │ This is not an SSH replacement — it's a web-based terminal emulator connected to a local shell on the   │
+  │                 │ machine where the backend runs.                                                                         │
+  ├─────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ Environment     │ Frontend reads VITE_API_HOST at build time, so rebuild (npm run build) after changing it.               │
+  │ vars            │                                                                                                         │
+  └─────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+  Quick one-liner summary
+
+  # Backend
+  cd backend && npm install && npm run dev
+
+  # Frontend (in another terminal)
+  cd frontend && echo "VITE_API_HOST=localhost:3000" > .env && npm install && npm run build && npm run preview
+
+  Then open http://localhost:5173 in your browser.
+
+
+
 ## Features
 
 - **Real PTY** — Not a simulation; spawns actual `bash`/`zsh`/`fish` processes
